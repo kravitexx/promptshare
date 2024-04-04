@@ -29,7 +29,7 @@ async function page({ params }: { params: { id: string } }) {
           parentId={thread.parentId}
           content={thread.text}
           code={thread.code} // Add this line to pass the code snippet
-          imageUrl={user.imageUrl} // Pass the imageUrl to the ThreadCard component
+          imageUrl={thread.imageUrl} // Pass the imageUrl to the ThreadCard component
           author={thread.author}
           community={thread.community}
           createdAt={thread.createdAt}
