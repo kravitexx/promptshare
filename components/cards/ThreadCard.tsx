@@ -109,7 +109,7 @@ function ThreadCard({
                   />
                 </Link>
                
-                <CopyButton code={code} width="140px" height="26px" />
+                <CopyButton  width="140px" height="26px" code={code || ''} />
                 <AIToolsButton width="100px" height="26px" />
                 
               </div>
