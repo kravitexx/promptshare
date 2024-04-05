@@ -2,10 +2,10 @@ import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs";
 
 import Comment from "@/components/forms/Comment";
-import ThreadCard from "@/components/cards/ThreadCard";
+import PromptCard from "@/components/cards/PromptCard";
 
 import { fetchUser } from "@/lib/actions/user.actions";
-import { fetchThreadById } from "@/lib/actions/thread.actions";
+import { fetchPromptById } from "@/lib/actions/prompt.actions";
 
 export const revalidate = 0;
 
@@ -18,36 +18,36 @@ async function page({ params }: { params: { id: string } }) {
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
 
-  const thread = await fetchThreadById(params.id);
+  const prompt = await fetchPromptById(params.id);
 
   return (
     <section className='relative'>
       <div>
-        <ThreadCard
-          id={thread._id}
+        <PromptCard
+          id={prompt._id}
           currentUserId={user.id}
-          parentId={thread.parentId}
-          content={thread.text}
-          code={thread.code} // Add this line to pass the code snippet
-          imageUrl={thread.imageUrl} // Pass the imageUrl to the ThreadCard component
-          author={thread.author}
-          community={thread.community}
-          createdAt={thread.createdAt}
-          comments={thread.children}
+          parentId={prompt.parentId}
+          content={prompt.text}
+          code={prompt.code} // Add this line to pass the code snippet
+          imageUrl={prompt.imageUrl} // Pass the imageUrl to the PromptCard component
+          author={prompt.author}
+          community={prompt.community}
+          createdAt={prompt.createdAt}
+          comments={prompt.children}
         />
       </div>
 
       <div className='mt-7'>
         <Comment
-          threadId={params.id}
+          promptId={params.id}
           currentUserImg={user.imageUrl}
           currentUserId={JSON.stringify(userInfo._id)}
         />
       </div>
 
       <div className='mt-10'>
-        {thread.children.map((childItem: any) => (
-          <ThreadCard
+        {prompt.children.map((childItem: any) => (
+          <PromptCard
             key={childItem._id}
             id={childItem._id}
             currentUserId={user.id}

@@ -1,8 +1,5 @@
 "use client";
-
-
 import { useState } from 'react';
-
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { useOrganization } from "@clerk/nextjs";
@@ -20,20 +17,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useUploadThing } from "@/lib/uploadthing"; // Import the hook from your uploadthing.ts
-import { ThreadValidation } from "@/lib/validations/thread";
-import { createThread } from "@/lib/actions/thread.actions";
+import { PromptValidation } from "@/lib/validations/prompt";
+import { createPrompt } from "@/lib/actions/prompt.actions";
 
 interface Props {
   userId: string;
 }
 
-// Extend the existing ThreadValidation to include a codeSnippet field
-const ThreadWithCodeValidation = ThreadValidation.extend({
+// Extend the existing PromptValidation to include a codeSnippet field
+const PromptWithCodeValidation = PromptValidation.extend({
   codeSnippet: z.string().optional(),
   imageUrl: z.string().optional(), // Add a field for the image URL
 });
 
-function PostThread({ userId }: Props) {
+function PostPrompt({ userId }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   
@@ -42,10 +39,10 @@ function PostThread({ userId }: Props) {
   const [files, setFiles] = useState<File[]>([]); // State to store the selected files
   
 
-  const form = useForm<z.infer<typeof ThreadWithCodeValidation>>({
-    resolver: zodResolver(ThreadWithCodeValidation),
+  const form = useForm<z.infer<typeof PromptWithCodeValidation>>({
+    resolver: zodResolver(PromptWithCodeValidation),
     defaultValues: {
-      thread: "",
+      prompt: "",
       codeSnippet: "", // Add a default value for the code snippet
       imageUrl: "", // Default value for the image URL
       accountId: userId,
@@ -59,7 +56,7 @@ function PostThread({ userId }: Props) {
     }
   };
 
-  const onSubmit = async (values: z.infer<typeof ThreadWithCodeValidation>) => {
+  const onSubmit = async (values: z.infer<typeof PromptWithCodeValidation>) => {
     let imageUrl = values.imageUrl;
 
     if (files.length > 0) {
@@ -73,8 +70,8 @@ function PostThread({ userId }: Props) {
         return;
       }
     }
-    await createThread({
-      text: values.thread,
+    await createPrompt({
+      text: values.prompt,
       code: values.codeSnippet, // Include the code snippet in the data sent to the server
       imageUrl, // Include the image URL in the data sent to the server
       author: userId,
@@ -92,7 +89,7 @@ function PostThread({ userId }: Props) {
       >
         <FormField
           control={form.control}
-          name='thread'
+          name='prompt'
           render={({ field}) => (
             <FormItem className='flex w-full flex-col gap-3'>
               <FormLabel className='text-base-semibold text-light-2'>
@@ -116,7 +113,7 @@ function PostThread({ userId }: Props) {
                 Write the Prompt Below:
               </FormLabel>
               <FormControl className='no-focus border border-dark-4 bg-dark-3 text-light-1'>
-                <Textarea rows={10} {...field} className="thread-content" placeholder="Prompt" />
+                <Textarea rows={10} {...field} className="prompt-content" placeholder="Prompt" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -149,4 +146,4 @@ function PostThread({ userId }: Props) {
   );
 }
 
-export default PostThread;
+export default PostPrompt;

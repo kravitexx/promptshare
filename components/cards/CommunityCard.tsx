@@ -35,7 +35,7 @@ function CommunityCard({ id, name, username, imgUrl, bio, members }: Props) {
         </div>
       </div>
 
-      <p className='mt-4 text-subtle-medium text-gray-1 thread-content'>{bio}</p>
+      <p className='mt-4 text-subtle-medium text-gray-1 prompt-content'>{bio}</p>
 
       <div className='mt-5 flex flex-wrap items-center justify-between gap-3'>
         <Link href={`/communities/${id}`}>

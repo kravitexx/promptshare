@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { formatDateString } from "@/lib/utils";
-import DeleteThread from "../forms/DeleteThread";
+import DeletePrompt from "../forms/DeletePrompt";
 import CopyButton from "../forms/CopyButton";
 
 import AIToolsButton from "../forms/AIToolsButton";
@@ -33,7 +33,7 @@ interface Props {
   isComment?: boolean;
 }
 
-function ThreadCard({
+function PromptCard({
   id,
   currentUserId,
   parentId,
@@ -64,7 +64,7 @@ function ThreadCard({
               />
             </Link>
 
-            <div className='thread-card_bar' />
+            <div className='prompt-card_bar' />
           </div>
 
           <div className='flex w-full flex-col'>
@@ -74,11 +74,11 @@ function ThreadCard({
               </h4>
             </Link>
 
-            <p className='mt-2 text-small-regular text-light-2 thread-content'>{content}</p>
+            <p className='mt-2 text-small-regular text-light-2 prompt-content'>{content}</p>
               {/* Conditionally render the "Prompt:" label and the code snippet if 'code' exists */}
       {code && (
         <>
-          <div className='mt-2 text-light-2 thread-content bold-font' >Prompt:</div>
+          <div className='mt-2 text-light-2 prompt-content bold-font' >Prompt:</div>
           <pre className='code-snippet my-custom-margin'>{code}</pre>
         </>
       )}
@@ -87,7 +87,7 @@ function ThreadCard({
         <div className='mt-4'>
           <Image
             src={imageUrl}
-            alt='Thread Image'
+            alt='Prompt Image'
             width={500} // Set desired width
             height={300} // Set desired height
             layout='responsive' // This will maintain the aspect ratio of the image
@@ -99,7 +99,7 @@ function ThreadCard({
             <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
               <div className='flex gap-3.5'>
 
-                <Link href={`/thread/${id}`}>
+                <Link href={`/prompt/${id}`}>
                   <Image
                     src='/assets/reply.svg'
                     alt='heart'
@@ -116,7 +116,7 @@ function ThreadCard({
               
 
               {isComment && comments.length > 0 && (
-                <Link href={`/thread/${id}`}>
+                <Link href={`/prompt/${id}`}>
                   <p className='mt-1 text-subtle-medium text-gray-1'>
                     {comments.length} repl{comments.length > 1 ? "ies" : "y"}
                   </p>
@@ -126,8 +126,8 @@ function ThreadCard({
           </div>
         </div>
 
-        <DeleteThread
-          threadId={JSON.stringify(id)}
+        <DeletePrompt
+          promptId={JSON.stringify(id)}
           currentUserId={currentUserId}
           authorId={author.id}
           parentId={parentId}
@@ -148,7 +148,7 @@ function ThreadCard({
             />
           ))}
 
-          <Link href={`/thread/${id}`}>
+          <Link href={`/prompt/${id}`}>
             <p className='mt-1 text-subtle-medium text-gray-1'>
               {comments.length} repl{comments.length > 1 ? "ies" : "y"}
             </p>
@@ -179,4 +179,4 @@ function ThreadCard({
   );
 }
 
-export default ThreadCard;
+export default PromptCard;

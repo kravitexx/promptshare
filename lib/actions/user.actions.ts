@@ -4,7 +4,7 @@ import { FilterQuery, SortOrder } from "mongoose";
 import { revalidatePath } from "next/cache";
 
 import Community from "../models/community.model";
-import Thread from "../models/thread.model";
+import Prompt from "../models/prompt.model";
 import User from "../models/user.model";
 
 import { connectToDB } from "../mongoose";
@@ -66,10 +66,10 @@ export async function fetchUserPosts(userId: string) {
   try {
     connectToDB();
 
-    // Find all threads authored by the user with the given userId
-    const threads = await User.findOne({ id: userId }).populate({
-      path: "threads",
-      model: Thread,
+    // Find all prompts authored by the user with the given userId
+    const prompts = await User.findOne({ id: userId }).populate({
+      path: "prompts",
+      model: Prompt,
       populate: [
         {
           path: "community",
@@ -78,7 +78,7 @@ export async function fetchUserPosts(userId: string) {
         },
         {
           path: "children",
-          model: Thread,
+          model: Prompt,
           populate: {
             path: "author",
             model: User,
@@ -87,9 +87,9 @@ export async function fetchUserPosts(userId: string) {
         },
       ],
     });
-    return threads;
+    return prompts;
   } catch (error) {
-    console.error("Error fetching user threads:", error);
+    console.error("Error fetching user prompts:", error);
     throw error;
   }
 }
@@ -157,18 +157,18 @@ export async function getActivity(userId: string) {
   try {
     connectToDB();
 
-    // Find all threads created by the user
-    const userThreads = await Thread.find({ author: userId });
+    // Find all prompts created by the user
+    const userPrompts = await Prompt.find({ author: userId });
 
-    // Collect all the child thread ids (replies) from the 'children' field of each user thread
-    const childThreadIds = userThreads.reduce((acc, userThread) => {
-      return acc.concat(userThread.children);
+    // Collect all the child prompt ids (replies) from the 'children' field of each user prompt
+    const childPromptIds = userPrompts.reduce((acc, userPrompt) => {
+      return acc.concat(userPrompt.children);
     }, []);
 
-    // Find and return the child threads (replies) excluding the ones created by the same user
-    const replies = await Thread.find({
-      _id: { $in: childThreadIds },
-      author: { $ne: userId }, // Exclude threads authored by the same user
+    // Find and return the child prompts (replies) excluding the ones created by the same user
+    const replies = await Prompt.find({
+      _id: { $in: childPromptIds },
+      author: { $ne: userId }, // Exclude prompts authored by the same user
     }).populate({
       path: "author",
       model: User,

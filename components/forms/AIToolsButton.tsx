@@ -9,7 +9,7 @@ interface AIToolsButtonProps {
 
 const AIToolsButton: React.FC<AIToolsButtonProps> = ({ width, height }) => {
   return (
-    <a href="https://linktr.ee/kravitexx" className="ai-tools-link">
+    <a href="https://linktr.ee/kravitexx" target="_blank" rel="noopener noreferrer" className="ai-tools-link">
       <Button style={{ width, height }} className="community-card_btn">
         AI Tools
       </Button>

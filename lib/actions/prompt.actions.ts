@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { connectToDB } from "../mongoose";
 
 import User from "../models/user.model";
-import Thread from "../models/thread.model";
+import Prompt from "../models/prompt.model";
 import Community from "../models/community.model";
 
 export async function fetchPosts(pageNumber = 1, pageSize = 20) {
@@ -14,8 +14,8 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
   // Calculate the number of posts to skip based on the page number and page size.
   const skipAmount = (pageNumber - 1) * pageSize;
 
-  // Create a query to fetch the posts that have no parent (top-level threads) (a thread that is not a comment/reply).
-  const postsQuery = Thread.find({ parentId: { $in: [null, undefined] } })
+  // Create a query to fetch the posts that have no parent (top-level prompts) (a prompt that is not a comment/reply).
+  const postsQuery = Prompt.find({ parentId: { $in: [null, undefined] } })
     .sort({ createdAt: "desc" })
     .skip(skipAmount)
     .limit(pageSize)
@@ -36,8 +36,8 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
       },
     });
 
-  // Count the total number of top-level posts (threads) i.e., threads that are not comments.
-  const totalPostsCount = await Thread.countDocuments({
+  // Count the total number of top-level posts (prompts) i.e., prompts that are not comments.
+  const totalPostsCount = await Prompt.countDocuments({
     parentId: { $in: [null, undefined] },
   }); // Get the total count of posts
 
@@ -57,7 +57,7 @@ interface Params {
   path: string,
 }
 
-export async function createThread({ text, code, imageUrl, author, communityId, path }: Params
+export async function createPrompt({ text, code, imageUrl, author, communityId, path }: Params
 ) {
   
   try {
@@ -68,105 +68,105 @@ export async function createThread({ text, code, imageUrl, author, communityId, 
       { _id: 1 }
     );
 
-    const createdThread = await Thread.create({
+    const createdPrompt = await Prompt.create({
       text,
-      code, // This will now be accepted as part of the thread document
-      imageUrl, // Save the imageUrl to the thread document
+      code, // This will now be accepted as part of the prompt document
+      imageUrl, // Save the imageUrl to the prompt document
       author,
       community: communityIdObject, // Assign communityId if provided, or leave it null for personal account
     });
 
     // Update User model
     await User.findByIdAndUpdate(author, {
-      $push: { threads: createdThread._id },
+      $push: { prompts: createdPrompt._id },
     });
 
     if (communityIdObject) {
       // Update Community model
       await Community.findByIdAndUpdate(communityIdObject, {
-        $push: { threads: createdThread._id },
+        $push: { prompts: createdPrompt._id },
       });
     }
 
     revalidatePath(path);
   } catch (error: any) {
-    throw new Error(`Failed to create thread: ${error.message}`);
+    throw new Error(`Failed to create prompt: ${error.message}`);
   }
 }
 
-async function fetchAllChildThreads(threadId: string): Promise<any[]> {
-  const childThreads = await Thread.find({ parentId: threadId });
+async function fetchAllChildPrompts(promptId: string): Promise<any[]> {
+  const childPrompts = await Prompt.find({ parentId: promptId });
 
-  const descendantThreads = [];
-  for (const childThread of childThreads) {
-    const descendants = await fetchAllChildThreads(childThread._id);
-    descendantThreads.push(childThread, ...descendants);
+  const descendantPrompts = [];
+  for (const childPrompt of childPrompts) {
+    const descendants = await fetchAllChildPrompts(childPrompt._id);
+    descendantPrompts.push(childPrompt, ...descendants);
   }
 
-  return descendantThreads;
+  return descendantPrompts;
 }
 
-export async function deleteThread(id: string, path: string): Promise<void> {
+export async function deletePrompt(id: string, path: string): Promise<void> {
   try {
     connectToDB();
 
-    // Find the thread to be deleted (the main thread)
-    const mainThread = await Thread.findById(id).populate("author community");
+    // Find the prompt to be deleted (the main prompt)
+    const mainPrompt = await Prompt.findById(id).populate("author community");
 
-    if (!mainThread) {
-      throw new Error("Thread not found");
+    if (!mainPrompt) {
+      throw new Error("Prompt not found");
     }
 
-    // Fetch all child threads and their descendants recursively
-    const descendantThreads = await fetchAllChildThreads(id);
+    // Fetch all child prompts and their descendants recursively
+    const descendantPrompts = await fetchAllChildPrompts(id);
 
-    // Get all descendant thread IDs including the main thread ID and child thread IDs
-    const descendantThreadIds = [
+    // Get all descendant prompt IDs including the main prompt ID and child prompt IDs
+    const descendantPromptIds = [
       id,
-      ...descendantThreads.map((thread) => thread._id),
+      ...descendantPrompts.map((prompt) => prompt._id),
     ];
 
     // Extract the authorIds and communityIds to update User and Community models respectively
     const uniqueAuthorIds = new Set(
       [
-        ...descendantThreads.map((thread) => thread.author?._id?.toString()), // Use optional chaining to handle possible undefined values
-        mainThread.author?._id?.toString(),
+        ...descendantPrompts.map((prompt) => prompt.author?._id?.toString()), // Use optional chaining to handle possible undefined values
+        mainPrompt.author?._id?.toString(),
       ].filter((id) => id !== undefined)
     );
 
     const uniqueCommunityIds = new Set(
       [
-        ...descendantThreads.map((thread) => thread.community?._id?.toString()), // Use optional chaining to handle possible undefined values
-        mainThread.community?._id?.toString(),
+        ...descendantPrompts.map((prompt) => prompt.community?._id?.toString()), // Use optional chaining to handle possible undefined values
+        mainPrompt.community?._id?.toString(),
       ].filter((id) => id !== undefined)
     );
 
-    // Recursively delete child threads and their descendants
-    await Thread.deleteMany({ _id: { $in: descendantThreadIds } });
+    // Recursively delete child prompts and their descendants
+    await Prompt.deleteMany({ _id: { $in: descendantPromptIds } });
 
     // Update User model
     await User.updateMany(
       { _id: { $in: Array.from(uniqueAuthorIds) } },
-      { $pull: { threads: { $in: descendantThreadIds } } }
+      { $pull: { prompts: { $in: descendantPromptIds } } }
     );
 
     // Update Community model
     await Community.updateMany(
       { _id: { $in: Array.from(uniqueCommunityIds) } },
-      { $pull: { threads: { $in: descendantThreadIds } } }
+      { $pull: { prompts: { $in: descendantPromptIds } } }
     );
 
     revalidatePath(path);
   } catch (error: any) {
-    throw new Error(`Failed to delete thread: ${error.message}`);
+    throw new Error(`Failed to delete prompt: ${error.message}`);
   }
 }
 
-export async function fetchThreadById(threadId: string) {
+export async function fetchPromptById(promptId: string) {
   connectToDB();
 
   try {
-    const thread = await Thread.findById(threadId)
+    const prompt = await Prompt.findById(promptId)
       .populate({
         path: "author",
         model: User,
@@ -187,7 +187,7 @@ export async function fetchThreadById(threadId: string) {
           },
           {
             path: "children", // Populate the children field within children
-            model: Thread, // The model of the nested children (assuming it's the same "Thread" model)
+            model: Prompt, // The model of the nested children (assuming it's the same "Prompt" model)
             populate: {
               path: "author", // Populate the author field within nested children
               model: User,
@@ -198,15 +198,15 @@ export async function fetchThreadById(threadId: string) {
       })
       .exec();
 
-    return thread;
+    return prompt;
   } catch (err) {
-    console.error("Error while fetching thread:", err);
-    throw new Error("Unable to fetch thread");
+    console.error("Error while fetching prompt:", err);
+    throw new Error("Unable to fetch prompt");
   }
 }
 
-export async function addCommentToThread(
-  threadId: string,
+export async function addCommentToPrompt(
+  promptId: string,
   commentText: string,
   userId: string,
   path: string
@@ -214,28 +214,28 @@ export async function addCommentToThread(
   connectToDB();
 
   try {
-    // Find the original thread by its ID
-    const originalThread = await Thread.findById(threadId);
+    // Find the original prompt by its ID
+    const originalPrompt = await Prompt.findById(promptId);
 
-    if (!originalThread) {
-      throw new Error("Thread not found");
+    if (!originalPrompt) {
+      throw new Error("Prompt not found");
     }
 
-    // Create the new comment thread
-    const commentThread = new Thread({
+    // Create the new comment prompt
+    const commentPrompt = new Prompt({
       text: commentText,
       author: userId,
-      parentId: threadId, // Set the parentId to the original thread's ID
+      parentId: promptId, // Set the parentId to the original prompt's ID
     });
 
-    // Save the comment thread to the database
-    const savedCommentThread = await commentThread.save();
+    // Save the comment prompt to the database
+    const savedCommentPrompt = await commentPrompt.save();
 
-    // Add the comment thread's ID to the original thread's children array
-    originalThread.children.push(savedCommentThread._id);
+    // Add the comment prompt's ID to the original prompt's children array
+    originalPrompt.children.push(savedCommentPrompt._id);
 
-    // Save the updated original thread to the database
-    await originalThread.save();
+    // Save the updated original prompt to the database
+    await originalPrompt.save();
 
     revalidatePath(path);
   } catch (err) {

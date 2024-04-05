@@ -1,17 +1,17 @@
 import mongoose from "mongoose";
 
-const threadSchema = new mongoose.Schema({
+const promptSchema = new mongoose.Schema({
   text: {
     type: String,
     required: true,
   },
   code: { // Add this new field for the code snippet
     type: String,
-    required: false, // Make it optional as not all threads will have code snippets
+    required: false, // Make it optional as not all prompts will have code snippets
   },
   imageUrl: {
     type: String,
-    required: false, // Make it optional as not all threads will have an image
+    required: false, // Make it optional as not all prompts will have an image
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,
@@ -32,11 +32,11 @@ const threadSchema = new mongoose.Schema({
   children: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Thread",
+      ref: "Prompt",
     },
   ],
 });
 
-const Thread = mongoose.models.Thread || mongoose.model("Thread", threadSchema);
+const Prompt = mongoose.models.Prompt || mongoose.model("Prompt", promptSchema);
 
-export default Thread;
+export default Prompt;

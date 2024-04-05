@@ -3,13 +3,13 @@ import { redirect } from "next/navigation";
 import { fetchCommunityPosts } from "@/lib/actions/community.actions";
 import { fetchUserPosts } from "@/lib/actions/user.actions";
 
-import ThreadCard from "../cards/ThreadCard";
+import PromptCard from "../cards/PromptCard";
 
 interface Result {
   name: string;
   image: string;
   id: string;
-  threads: {
+  prompts: {
     _id: string;
     text: string;
     code: string;
@@ -40,7 +40,7 @@ interface Props {
   accountType: string;
 }
 
-async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
+async function PromptsTab({ currentUserId, accountId, accountType }: Props) {
   let result: Result;
 
   if (accountType === "Community") {
@@ -55,35 +55,35 @@ async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
 
   return (
     <section className='mt-9 flex flex-col gap-10'>
-      {result.threads.map((thread) => (
-        <ThreadCard
-          key={thread._id}
-          id={thread._id}
+      {result.prompts.map((prompt) => (
+        <PromptCard
+          key={prompt._id}
+          id={prompt._id}
           currentUserId={currentUserId}
-          parentId={thread.parentId}
-          content={thread.text}
-          code={thread.code} // Add this line to pass the code snippet
-          imageUrl={thread.imageUrl}
+          parentId={prompt.parentId}
+          content={prompt.text}
+          code={prompt.code} // Add this line to pass the code snippet
+          imageUrl={prompt.imageUrl}
           author={
             accountType === "User"
               ? { name: result.name, image: result.image, id: result.id }
               : {
-                  name: thread.author.name,
-                  image: thread.author.image,
-                  id: thread.author.id,
+                  name: prompt.author.name,
+                  image: prompt.author.image,
+                  id: prompt.author.id,
                 }
           }
           community={
             accountType === "Community"
               ? { name: result.name, id: result.id, image: result.image }
-              : thread.community
+              : prompt.community
           }
-          createdAt={thread.createdAt}
-          comments={thread.children}
+          createdAt={prompt.createdAt}
+          comments={prompt.children}
         />
       ))}
     </section>
   );
 }
 
-export default ThreadsTab;
+export default PromptsTab;

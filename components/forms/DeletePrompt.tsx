@@ -3,18 +3,18 @@
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
-import { deleteThread } from "@/lib/actions/thread.actions";
+import { deletePrompt } from "@/lib/actions/prompt.actions";
 
 interface Props {
-  threadId: string;
+  promptId: string;
   currentUserId: string;
   authorId: string;
   parentId: string | null;
   isComment?: boolean;
 }
 
-function DeleteThread({
-  threadId,
+function DeletePrompt({
+  promptId,
   currentUserId,
   authorId,
   parentId,
@@ -33,7 +33,7 @@ function DeleteThread({
       height={18}
       className='cursor-pointer object-contain'
       onClick={async () => {
-        await deleteThread(JSON.parse(threadId), pathname);
+        await deletePrompt(JSON.parse(promptId), pathname);
         if (!parentId || !isComment) {
           router.push("");
         }
@@ -42,4 +42,4 @@ function DeleteThread({
   );
 }
 
-export default DeleteThread;
+export default DeletePrompt;

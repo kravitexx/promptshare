@@ -27,7 +27,7 @@ async function Page() {
         Complete your profile now, to use PromptShare.
       </p>
 
-      <section className='mt-9 bg-dark-2 p-10 thread-content'>
+      <section className='mt-9 bg-dark-2 p-10 prompt-content'>
         <AccountProfile user={userData} btnTitle='Continue' />
       </section>
     </main>

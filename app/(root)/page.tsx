@@ -1,10 +1,10 @@
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-import ThreadCard from "@/components/cards/ThreadCard";
+import PromptCard from "@/components/cards/PromptCard";
 import Pagination from "@/components/shared/Pagination";
 
-import { fetchPosts } from "@/lib/actions/thread.actions";
+import { fetchPosts } from "@/lib/actions/prompt.actions";
 import { fetchUser } from "@/lib/actions/user.actions";
 
 async function Home({
@@ -29,18 +29,18 @@ async function Home({
 
       <section className='mt-9 flex flex-col gap-10'>
         {result.posts.length === 0 ? (
-          <p className='no-result'>No threads found</p>
+          <p className='no-result'>No prompts found</p>
         ) : (
           <>
             {result.posts.map((post) => (
-              <ThreadCard
+              <PromptCard
                 key={post._id}
                 id={post._id}
                 currentUserId={user.id}
                 parentId={post.parentId}
                 content={post.text}
                 code={post.code} // Add this line to pass the code snippet
-                imageUrl={post.imageUrl} // Pass the imageUrl to the ThreadCard component
+                imageUrl={post.imageUrl} // Pass the imageUrl to the PromptCard component
                 author={post.author}
                 community={post.community}
                 createdAt={post.createdAt}
