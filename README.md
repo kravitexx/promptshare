@@ -3,7 +3,9 @@
    <div align="center">
      This Project is inspired from  <a href="https://www.youtube.com/@javascriptmastery/videos" target="_blank"><b>JavaScript Mastery</b></a> YouTube. Check out the channel
     </div>
-</div>
+   <div align="center">
+     Special Thanks to My Helpful Buddy <a href="https://github.com/Fresh4774" target="_blank"><b>Friction4774</b></a>.
+    </div>
 
 ## 📋 <a name="table">Table of Contents</a>
 
