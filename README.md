@@ -41,11 +41,11 @@ A full stack PromptShare Website using Next.js 14+ with a redesigned look transf
 
 👉 **Commenting Feature**: A commenting feature to facilitate discussions within Prompts.
 
-👉 **Nested Commenting**: Commenting system with nested threads, providing a structured conversation flow.
+👉 **Nested Commenting**: Commenting system with nested Prompts, providing a structured conversation flow.
 
 👉 **User Search with Pagination**: A user search feature with pagination for easy exploration and discovery of other users.
 
-👉 **Activity Page**: Display notifications on the activity page when someone comments on a user's thread, enhancing user engagement.
+👉 **Activity Page**: Display notifications on the activity page when someone comments on a user's Prompt, enhancing user engagement.
 
 👉 **Profile Page**: User profile pages for showcasing information and enabling modification of profile settings.
 
@@ -53,7 +53,7 @@ A full stack PromptShare Website using Next.js 14+ with a redesigned look transf
 
 👉 **Community Member Management**: A user-friendly interface to manage community members, allowing role changes and removals.
 
-👉 **Admin-Specific Community Threads**: Enable admins to create Prompts specifically for their community.
+👉 **Admin-Specific Community Prompts**: Enable admins to create Prompts specifically for their community.
 
 👉 **Community Search with Pagination**: A community search feature with pagination for exploring different communities.
 
@@ -97,7 +97,7 @@ Make sure you have the following installed on your machine:
 
 ```bash
 git clone https://github.com/kravitexx/promptshare.git
-cd threads
+cd promptshare
 ```
 
 **Installation**
