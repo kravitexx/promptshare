@@ -35,7 +35,7 @@ A full stack PromptShare Website using Next.js 14+ with a redesigned look transf
 
 👉 **Authentication**: Authentication using Clerk for email, password, and social logins (Google and GitHub) with a comprehensive profile management system.
 
-👉 **Visually Appealing Home Page**: A visually appealing home page showcasing the latest threads for an engaging user experience.
+👉 **Visually Appealing Home Page**: A visually appealing home page showcasing the latest Prompts for an engaging user experience.
 
 👉 **Create Prompt Page**: A dedicated page for users to create Prompts, fostering community engagement
 
