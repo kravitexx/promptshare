@@ -83,6 +83,10 @@ A full stack PromptShare Website using Next.js 14+ with a redesigned look transf
 
 and many more, including code architecture and reusability 
 
+👉 **Copy Prompt**: Can easiliy copy the Prompt posted by Other Users
+
+👉 **AI Tools**: A simple AI tool button which Redirects to Linktree
+
 ## <a name="quick-start">🤸 Quick Start</a>
 
 Follow these steps to set up the project locally on your machine.
